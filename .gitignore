@@ -27,3 +27,4 @@ dist/
 .pi/sessions/
 .DS_Store
 Thumbs.db
+/.idea
