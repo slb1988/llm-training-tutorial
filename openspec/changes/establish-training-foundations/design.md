@@ -36,9 +36,9 @@ MiniMind 参考版本为 `233d00fa068ec2b8c0d4f07b703934d6391a5a73`。其原生�
 
 ### 3. 依赖按课程添加，版本通过实测锁定
 
-使用 Python 3.11 项目环境和 uv 锁文件。L01 选择官方索引的 PyTorch 2.10.0+cu128、pytest 8.4.2，包构建使用 hatchling 1.27.0；只支持当前选定的 Windows x64 安装路径。Tokenizers、Transformers、Datasets 在对应课程加入，不把全局 CPU Torch 带入项目。
+使用 Python 3.11 项目环境和 uv 锁文件。L01 选择官方索引的 PyTorch 2.10.0+cu128、NumPy 2.4.6、pytest 8.4.2，包构建使用 hatchling 1.27.0；只支持当前选定的 Windows x64 安装路径。Tokenizers、Transformers、Datasets 在对应课程加入，不把全局 CPU Torch 带入项目。
 
-不复制 MiniMind requirements，也不混装最新版本。torch 绑定专属官方 CUDA 索引，其他包从 PyPI 解析；安装文档记录来源和锁文件复现方式。选择仅表示候选组合，完成前必须通过本机真实 CPU/CUDA 探针和测试。
+不复制 MiniMind requirements，也不混装最新版本。torch 绑定专属官方 CUDA 索引，其他包从 PyPI 解析；安装文档记录来源和锁文件复现方式。本组合已通过本机真实 CPU/CUDA 探针、NumPy/PyTorch 互转和测试；后续依赖变化必须再次验证。
 
 ### 4. 主线 tokenizer 固定，toy BPE 独立
 

@@ -1,6 +1,7 @@
 import json
 import math
 
+import numpy as np
 import pytest
 import torch
 
@@ -26,6 +27,12 @@ def test_cpu_executes_forward_backward_and_update():
     assert result["output_dtype"] == "torch.float32"
     assert result["gpu"] is None
     assert not result["cuda_synchronized"]
+
+
+def test_numpy_torch_round_trip():
+    values = np.array([1, 2, 3], dtype=np.float32)
+    tensor = torch.from_numpy(values)
+    np.testing.assert_array_equal((tensor + 1).numpy(), values + 1)
 
 
 @pytest.mark.parametrize(

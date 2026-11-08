@@ -2,7 +2,7 @@
 
 当前选择 **Windows 原生 x64 + Python 3.11 + uv**。优先在本机 RTX 5070 开发、验证和训练；性能不足时再由用户在另一台 Windows/5090 操作。
 
-**验证状态：L01 已在本机 Windows/5070 完成安装与实测，CPU FP32、CUDA FP32、CUDA BF16 及 13 项测试通过。** 另一台 5090 尚未测试。
+**验证状态：L01 已在本机 Windows/5070 完成安装与实测，CPU FP32、CUDA FP32、CUDA BF16 及 14 项测试通过。** 另一台 5090 尚未测试。
 
 ## 1. 固定组合与机器边界
 
@@ -13,6 +13,7 @@
 | Python | 3.11 系列；本机已有 3.11.8，使用它创建隔离环境 |
 | uv | 本机 0.8.4 |
 | PyTorch | 2.10.0+cu128，官方 CUDA 12.8 wheel |
+| NumPy | 2.4.6，项目运行依赖，已验证 PyTorch 互转 |
 | 测试 / 包构建 | pytest 8.4.2 / hatchling 1.27.0 |
 | 5090 | 用户确认是 Windows；具体版本、显存、驱动与执行结果待迁移时核实 |
 
@@ -89,18 +90,18 @@ uv run --frozen pytest -q -m "not cuda"
 
 | 检查 | 当前证据 |
 |---|---|
-| 全新项目隔离环境 | Python 3.11.8，Torch 2.10.0+cu128 / runtime 12.8；16 个运行/测试包完成安装，离线 frozen 同步复核通过 |
+| 全新项目隔离环境 | Python 3.11.8，Torch 2.10.0+cu128 / runtime 12.8；17 个运行/测试包完成安装，离线 frozen 同步复核通过 |
 | CPU FP32 | `actual_device=cpu`，前向/反向/参数更新通过；loss 0.117088 → 0.093820 |
 | 5070 CUDA FP32 | `actual_device=cuda:0`，前向/反向/参数更新与同步通过；loss 0.117088 → 0.093820 |
 | 5070 CUDA BF16 | 实际输出 `torch.bfloat16`、原生 BF16 支持、同步通过；loss 0.116782 → 0.093734 |
 | GPU 架构 | 实测 compute capability 12.0；wheel 编译架构包含 `sm_120` |
-| 自动测试 | 项目锁定环境 `13 passed, 1 warning`；真实 CUDA FP32/BF16 测试均执行，未跳过 |
+| 自动测试 | 项目锁定环境 `pytest -q -W error` 得到 `14 passed`，无警告；含 NumPy/PyTorch 互转与真实 CUDA FP32/BF16，未跳过 |
 | 全局 Python | 仍是原有 Torch 2.8.0+cpu，未被项目安装替换 |
 | 5090 迁移 | 未执行，不阻塞 L01 |
 
-验收依据是三份实际计算报告和完整测试结果，不仅是安装进程退出码。原始记录位于 `runs/environment-cpu.json`、`runs/environment-gpu.json`、`runs/environment-gpu-bf16.json` 和 `runs/validate-l01.stdout.log`；下载/验证后台进程已结束。
+验收依据是三份实际计算报告和完整测试结果，不仅是安装进程退出码。原始记录位于 `runs/environment-cpu.json`、`runs/environment-gpu.json`、`runs/environment-gpu-bf16.json` 和 `runs/numpy-validation.log`；下载/验证后台进程已结束。
 
-唯一测试 warning 是未安装可选 NumPy 的提示。本课只使用 PyTorch 张量计算，不调用 NumPy 桥接；不为消除提示额外引入依赖。后续数据课程需要 NumPy 时再加入并锁定版本。此前系统 CPU 环境的 11 项预检查不计入此次正式验收。
+NumPy 已作为项目运行依赖加入并锁定，不再出现缺少 NumPy 的提示。回归测试验证 `torch.from_numpy`、张量运算及 `.numpy()` 返回的数值一致；安装与后续复现仍统一使用项目锁文件，不修改全局 Python。此前系统 CPU 环境的预检查不计入正式验收。
 
 JSON 包含 Python/平台/Torch/runtime、驱动清单、设备名/显存/计算能力、Git revision/工作树状态、锁文件哈希与实际计算结果。完整日志和 JSON 保存在忽略的 `runs/`；不要提交凭据或私人路径。
 
@@ -121,7 +122,7 @@ JSON 包含 Python/平台/Torch/runtime、驱动清单、设备名/显存/计算
 | `torch.version.cuda` 是空或 CUDA unavailable | 是否用了全局 Python？用 `uv run --frozen python -c "import torch; print(torch.__version__, torch.version.cuda)"` 检查项目环境 |
 | 设备可见但 kernel/架构报错 | 查看探针中的 Torch/runtime/compiled architectures 与真实错误；不要以 nvidia-smi 成功盖过计算失败 |
 | DLL 加载失败 | 记录缺失的 DLL 和完整错误，检查官方 wheel 的系统前置要求；不要随机复制其他项目 DLL |
-| `Failed to initialize NumPy` | L01 尚未安装可选 NumPy；纯 PyTorch 探针可正常运行，不代表 CUDA 不可用 |
+| `Failed to initialize NumPy` | 本项目已锁定 NumPy；确认使用 `uv run --frozen` 并重新 `uv sync --frozen`，不要改用全局 pip 修复 |
 | hardlink 回退为 copy | uv 缓存和项目位于不同磁盘时正常回退，增加安装复制/空间开销，不代表训练计算变慢 |
 | BF16 请求失败 | 查看 native_bf16 与错误；明确选 FP32 继续定位，不声称 BF16 已验证 |
 | 下载超时或中断 | GPU wheel 较大，保持安装进程；使用原锁文件重试，保留日志，不关闭 TLS 验证 |
