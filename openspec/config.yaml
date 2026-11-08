@@ -4,25 +4,26 @@ context: |
   Language: zh
   All artifacts must be written in zh.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+  中文 LLM 训练 tutorial；路线 A：库优先、核心白盒实验、随机初始化权重。
+  真实训练由用户在另一台 5090 电脑进行，OS/显存/驱动未确认；不以编写机结果代替。
+  当前仅规划首阶段 L01–L08，后续模型调用、角色消息、tool use 与 RL 保留在总路线。
+  系统安装与复现说明维护在 docs/setup/README.md；自主模块在 docs/extensions/index.md。
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always state what is out of scope
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
-
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+rules:
+  proposal:
+    - 明确本阶段范围和非目标，不把后续课程当作当前实现。
+  specs:
+    - 规范用户可验证的行为，区分 CPU、目标 GPU 与模型能力证据。
+  design:
+    - 区分确认事实、候选实现和待用户选择；目标 OS 确认前不锁定系统安装命令。
+  tasks:
+    - 每个 checkbox 对应一课与一个提交，描述必须含验收；测试和教程随该课交付。
+    - L01 必须维护落盘的系统安装文档，并明确 5090 实测证据；自主扩展不列为当前任务。
+operations:
+  apply:
+    guidance:
+      - 规划校验通过不代表授权；用户 review 后仅实施指定的一课，完成后停下。
+      - 不自动安装驱动、远程操作、长训、调用付费 API 或 push。
+  archive:
+    guidance:
+      - 只在阶段任务与验收完成且满足用户 review 要求后归档，不将规划存在视为实现完成。

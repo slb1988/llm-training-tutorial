@@ -1,0 +1,29 @@
+# Local environments and credentials
+.venv/
+.venv-*/
+.env
+.env.*
+!.env.example
+
+# Python/tool caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+*.egg-info/
+build/
+dist/
+
+# Downloaded data, model artifacts and run outputs
+/data/
+/runs/
+/checkpoints/
+/artifacts/
+
+# Local agent sessions and OS metadata
+.pi/sessions/
+.DS_Store
+Thumbs.db
