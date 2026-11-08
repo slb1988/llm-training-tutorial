@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llm-training-tutorial"
+version = "0.1.0"
+description = "Step-by-step LLM training lessons"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = ["torch==2.10.0+cu128"]
+
+[project.scripts]
+llm-env = "llm_tutorial.environment:main"
+
+[dependency-groups]
+dev = ["pytest==8.4.2"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/llm_tutorial"]
+
+[tool.uv]
+environments = ["sys_platform == 'win32' and platform_machine == 'AMD64'"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["cuda: requires a real CUDA device; skipping is not GPU acceptance"]

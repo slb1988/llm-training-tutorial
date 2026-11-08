@@ -5,8 +5,9 @@ context: |
   All artifacts must be written in zh.
   Keep OpenSpec structural headings and SHALL/MUST keywords in English.
   中文 LLM 训练 tutorial；路线 A：库优先、核心白盒实验、随机初始化权重。
-  真实训练由用户在另一台 5090 电脑进行，OS/显存/驱动未确认；不以编写机结果代替。
-  当前仅规划首阶段 L01–L08，后续模型调用、角色消息、tool use 与 RL 保留在总路线。
+  用户已 review 首阶段；优先在本机 Windows/5070 开发测试和训练，性能瓶颈后再由用户迁移到 Windows/5090。
+  L01 验收是本机 CPU/5070 实测，5090 状态独立且不阻塞本课；每次只推进一课。
+  首阶段为 L01–L08，后续模型调用、角色消息、tool use 与 RL 保留在总路线。
   系统安装与复现说明维护在 docs/setup/README.md；自主模块在 docs/extensions/index.md。
 
 rules:
@@ -15,10 +16,10 @@ rules:
   specs:
     - 规范用户可验证的行为，区分 CPU、目标 GPU 与模型能力证据。
   design:
-    - 区分确认事实、候选实现和待用户选择；目标 OS 确认前不锁定系统安装命令。
+    - 区分本机 Windows/5070 实测与后续 Windows/5090 迁移；不因后备硬件存在而扩大当前预算。
   tasks:
     - 每个 checkbox 对应一课与一个提交，描述必须含验收；测试和教程随该课交付。
-    - L01 必须维护落盘的系统安装文档，并明确 5090 实测证据；自主扩展不列为当前任务。
+    - L01 必须维护 Windows 安装文档和本机 CPU/5070 实测证据；5090 迁移验证单列，自主扩展不列为当前任务。
 operations:
   apply:
     guidance:
